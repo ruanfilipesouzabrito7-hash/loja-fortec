@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loja Fictícia - Demonstração</title>
+  <style>
+    /* Estilos Gerais */
+    * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
+    body { background-color: #f4f4f9; color: #333; padding-bottom: 50px; }
+    
+    /* Cabeçalho */
+    header { background: #1e293b; color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { color: #ffffff; font-size: 22px; }
+    
+    /* Navegação com ícones brancos e alinhada à esquerda */
+    nav { background: #0f172a; padding: 10px 40px; display: flex; gap: 20px; justify-content: flex-start; align-items: center; }
+    nav button { background: none; border: none; color: white; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    nav button:hover { text-decoration: underline; }
+    
+    /* Estilo dos ícones vetoriais brancos */
+    .icone-svg { width: 18px; height: 18px; fill: white; }
+
+    /* Container */
+    .container { width: 100%; max-width: 100%; margin: 0; padding: 20px 40px; background: white; min-height: 80vh; }
+    
+    .alerta-falso { background: #ffe4e6; color: #9f1239; border: 1px solid #f43f5e; padding: 15px; border-radius: 5px; text-align: center; margin-bottom: 20px; font-weight: bold; }
+
+    /* BANNER POSICIONADO À ESQUERDA */
+    .banner-container { position: relative; width: 100%; max-width: 800px; height: 220px; margin: 0 0 25px 0; overflow: hidden; border-radius: 8px; background: #f1f5f9; border: 1px solid #ddd; }
+    
+    .banner-track { display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out; }
+    
+    .banner-slide { min-width: 100%; height: 100%; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background-color: #ffffff; position: relative; }
+    
+    .banner-slide img { width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; position: relative; }
+
+    /* Botões do Banner */
+    .banner-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: white; border: none; font-size: 18px; padding: 8px 12px; cursor: pointer; border-radius: 4px; user-select: none; z-index: 2; }
+    .banner-btn:hover { background: rgba(0,0,0,0.8); }
+    .banner-btn.prev { left: 10px; }
+    .banner-btn.next { right: 10px; }
+
+    .banner-dots { position: absolute; bottom: 8px; width: 100%; text-align: center; z-index: 2; }
+    .dot { display: inline-block; width: 8px; height: 8px; background: rgba(0,0,0,0.3); border-radius: 50%; margin: 0 4px; cursor: pointer; transition: background 0.3s; }
+    .dot.ativo { background: #1e293b; width: 10px; height: 10px; }
+
+    /* Grid de Produtos com largura reduzida e cards quadrangulares */
+    .produtos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; max-width: 1100px; }
+    .card-produto { border: 1px solid #ddd; padding: 12px; border-radius: 5px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: transform 0.2s; background: #fff; }
+    .card-produto:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    
+    /* Imagem quadrangular */
+    .card-produto img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 5px; }
+    
+    .card-produto h3 { margin: 8px 0 4px; font-size: 15px; }
+    .card-produto .preco { font-size: 16px; font-weight: bold; color: #16a34a; margin: 4px 0; }
+    .preco-normal { font-size: 16px; font-weight: bold; color: #000000; margin: 4px 0; }
+    .preco-antigo { text-decoration: line-through; color: #9ca3af; font-size: 13px; margin-right: 5px; font-weight: normal; }
+    
+    .card-estrelas { font-size: 13px; color: #d97706; margin-bottom: 4px; }
+
+    /* Controles de Quantidade */
+    .quantidade-box { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 6px 0; }
+    .quantidade-box label { font-size: 12px; font-weight: bold; }
+    .quantidade-box input { width: 45px; text-align: center; padding: 3px; border: 1px solid #ccc; border-radius: 4px; }
+
+    /* Botões */
+    button.btn-acao { background: #2563eb; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 13px; width: 100%; margin-top: 4px; }
+    button.btn-acao:hover { background: #1d4ed8; }
+    button.btn-secundario { background: #e2e8f0; color: #333; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+    button.btn-secundario:hover { background: #cbd5e1; }
+
+    /* Página do Produto Detalhada */
+    .detalhe-produto-container { display: flex; flex-wrap: wrap; gap: 30px; }
+    .detalhe-produto-imagem { flex: 1; min-width: 250px; max-width: 350px; }
+    .detalhe-produto-imagem img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+    .detalhe-produto-info { flex: 1.5; min-width: 300px; }
+    .detalhe-produto-info h2 { font-size: 24px; margin-bottom: 10px; }
+    .detalhe-produto-info .preco-grande { font-size: 26px; color: #16a34a; font-weight: bold; margin: 10px 0; }
+    .detalhe-produto-info .preco-grande-normal { font-size: 26px; color: #000000; font-weight: bold; margin: 10px 0; }
+    .detalhe-produto-info .descricao-longa { line-height: 1.6; color: #4b5563; margin-bottom: 20px; }
+
+    /* Seção de Avaliações */
+    .secao-avaliacoes { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; width: 100%; }
+    .secao-avaliacoes h3 { margin-bottom: 15px; font-size: 18px; }
+    
+    .painel-resumo-avaliacoes { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-around; text-align: center; }
+    .bloco-media-grande { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .numero-media-gigante { font-size: 42px; font-weight: bold; color: #d97706; line-height: 1; margin-bottom: 8px; }
+    .estrelas-gigantes { font-size: 20px; color: #d97706; margin-bottom: 4px; }
+    .total-avaliacoes-texto { font-size: 13px; color: #64748b; }
+
+    .barras-distribuicao { flex: 1; min-width: 200px; max-width: 300px; display: flex; flex-direction: column; gap: 6px; }
+    .linha-barra { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #475569; }
+    .barra-fundo { flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+    .barra-preenchida { height: 100%; background: #d97706; border-radius: 4px; }
+
+    .comentario-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+    .comentario-autor { font-weight: bold; font-size: 13px; color: #475569; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .comentario-texto { font-size: 14px; color: #334155; }
+    .comentario-nota { color: #d97706; }
+
+    /* Carrinho */
+    .item-carrinho { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+    .total-carrinho { font-size: 18px; font-weight: bold; text-align: right; margin-top: 15px; }
+
+    /* Seções */
+    .secao { display: none; }
+    .secao.ativa { display: block; }
+
+    /* Status do Pedido */
+    .status-box { text-align: center; padding: 30px; }
+    .status-etapa { display: inline-block; padding: 10px 20px; background: #e2e8f0; margin: 5px; border-radius: 20px; font-size: 14px; }
+    .status-etapa.concluido { background: #22c55e; color: white; }
+    .form-grupo { margin-bottom: 15px; }
+    .form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-grupo select, .form-grupo input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Minha Loja Fictícia</h1>
+  </header>
+
+  <nav>
+    <button onclick="mostrarSecao('produtos')">
+      <svg class="icone-svg" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Início / Produtos
+    </button>
+    <button onclick="mostrarSecao('carrinho')">
+      <svg class="icone-svg" viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      Carrinho (<span id="contador-carrinho">0</span>)
+    </button>
+  </nav>
+
+  <div class="container">
+    
+    <!-- AVISO DE SITE FALSO -->
+    <div class="alerta-falso">
+      ⚠️ ATENÇÃO: ESTE É UM SITE DE DEMONSTRAÇÃO/FALSO. NENHUMA COMPRA REAL SERÁ REALIZADA OU COBRADA.
+    </div>
+
+    <!-- 1. PÁGINA DE PRODUTOS (VITRINE) -->
+    <section id="produtos" class="secao ativa">
+      
+      <!-- BANNER DE IMAGENS ALINHADO À ESQUERDA -->
+      <div class="banner-container">
+        <div class="banner-track" id="banner-track">
+          <div class="banner-slide">
+            <img src="https://i.ibb.co/WvsGvf0P/Design-sem-nome-16.png" alt="Design sem nome (16)">
+          </div>
+          <div class="banner-slide">
+            <img src="https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/COISAS_DE_FLIPERMA_1" alt="Banner 2 Coisas de Fliperama">
+          </div>
+          <div class="banner-slide">
+            <img src="https://via.placeholder.com/800x220/d97706/ffffff?text=Banner+3+-+Novidades" alt="Banner 3">
+          </div>
+        </div>
+
+        <button class="banner-btn prev" onclick="mudarBanner(-1)">❮</button>
+        <button class="banner-btn next" onclick="mudarBanner(1)">❯</button>
+
+        <div class="banner-dots">
+          <span class="dot ativo" onclick="irParaBanner(0)"></span>
+          <span class="dot" onclick="irParaBanner(1)"></span>
+          <span class="dot" onclick="irParaBanner(2)"></span>
+        </div>
+      </div>
+
+      <h2>Nossos Produtos</h2>
+      <br>
+      <div class="produtos-grid" id="grid-produtos">
+        <!-- Produtos inseridos via JS -->
+      </div>
+    </section>
+
+    <!-- 2. PÁGINA INDIVIDUAL DO PRODUTO -->
+    <section id="detalhe-produto" class="secao">
+      <button class="btn-secundario" onclick="mostrarSecao('produtos')" style="margin-bottom: 15px;">← Voltar para produtos</button>
+      <div class="detalhe-produto-container" id="conteudo-detalhe">
+        <!-- Detalhes do produto -->
+      </div>
+    </section>
+
+    <!-- 3. PÁGINA DO CARRINHO -->
+    <section id="carrinho" class="secao">
+      <h2>Seu Carrinho</h2>
+      <br>
+      <div id="lista-carrinho">
+        <p>Seu carrinho está vazio.</p>
+      </div>
+      <div class="total-carrinho">Total: R$ <span id="valor-total">0.00</span></div>
+      <br>
+      <button class="btn-acao" id="btn-ir-pagamento" onclick="mostrarSecao('pagamento')" style="display:none;">Ir para o Pagamento</button>
+    </section>
+
+    <!-- 4. PÁGINA DE PAGAMENTO -->
+    <section id="pagamento" class="secao">
+      <h2>Pagamento de Brincadeira</h2>
+      <br>
+      <form onsubmit="realizarPagamento(event)">
+        <div class="form-grupo">
+          <label>Nome Completo:</label>
+          <input type="text" placeholder="Ex: João da Silva" required>
+        </div>
+
+        <div class="form-grupo">
+          <label>Forma de Pagamento:</label>
+          <select id="forma-pagamento" required>
+            <option value="Pix">Pix (Simulado)</option>
+            <option value="Cartão de Crédito">Cartão de Crédito (Simulado)</option>
+            <option value="Boleto">Boleto (Simulado)</option>
+          </select>
+        </div>
+
+        <p style="margin-bottom: 15px; color: #666; font-size: 13px;">
+          * Nenhum dado financeiro real deve ser digitado aqui.
+        </p>
+
+        <button type="submit" class="btn-acao">Finalizar Compra Fictícia</button>
+      </form>
+    </section>
+
+    <!-- 5. PÁGINA DE STATUS -->
+    <section id="status" class="secao">
+      <div class="status-box">
+        <h2 style="color: #16a34a;">🎉 Pedido Realizado com Sucesso!</h2>
+        <p>Obrigado por testar nossa loja fictícia.</p>
+        <br>
+        <p><strong>Número do Pedido:</strong> #<span id="numero-pedido"></span></p>
+        <p><strong>Forma de Pagamento:</strong> <span id="pagamento-escolhido"></span></p>
+        <br><br>
+        <h3>Status do Pedido:</h3>
+        <br>
+        <div>
+          <span class="status-etapa concluido">✓ Pedido Recebido</span>
+          <span class="status-etapa concluido">✓ Pagamento Aprovado</span>
+          <span class="status-etapa">📦 Em Separação</span>
+          <span class="status-etapa">🚚 Enviado</span>
+        </div>
+        <br><br>
+        <button class="btn-acao" onclick="reiniciarLoja()" style="max-width: 200px;">Voltar ao Início</button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const listaProdutos = [
+      {
+        id: 1,
+        nome: "Salgadinho Palhaçitos sabor original 100g",
+        descricaoDetalhada: "Sabor clássico, só não coma muito de uma vez, pois ele te deixa MUITO BURRO! (Ninguém sabe o motivo)",
+        preco: 4.50,
+        precoAntigo: 6.50,
+        imagem: "https://i.ibb.co/qF7DdW3G/Gemini-Generated-Image-18ztqh18ztqh18zt.png",
+        avaliacoes: [
+          { autor: "brainrot03", nota: 1, texto: "Comi três pacotes seguidos e agora esqueci como abro a porta da minha casa. Socorro." },
+          { autor: "carlinhos_burro", nota: 2, texto: "O gosto é bom, mas tentei fazer uma conta de 2+2 depois de comer e travou meu cérebro." },
+          { autor: "marcos_silva", nota: 3, texto: "Aviso verdadeiro! Minha inteligência caiu uns 50 pontos logo após mastigar o primeiro." },
+          { autor: "ana_clara", nota: 1, texto: "Fiquei tão burra que tentei pagar o ônibus com uma casca de banana. Cuidado!" },
+          { autor: "pedro_caos", nota: 2, texto: "Sabor original ótimo, mas agora estou olhando pra parede há duas horas sem pensar em nada." },
+          { autor: "lucas_gamer", nota: 3, texto: "Joguei uma partida rankeada depois de comer e errei todos os botões do controle." },
+          { autor: "julia_f", nota: 1, texto: "Esqueci meu próprio nome por 15 minutos. Nota 10 pelo efeito colateral cômico." },
+          { autor: "bia_santos", nota: 2, texto: "Crocante, mas perdi a capacidade de formular frases complexas." },
+          { autor: "roberto_almeida", nota: 3, texto: "Realmente te deixa muito burro, o aviso da descrição não é brincadeira." },
+          { autor: "neto_br", nota: 1, texto: "Comprei pra testar e agora não sei mais amarrar o tênis. Perfeito!" }
+        ]
+      },
+      {
+        id: 2,
+        nome: "Salgadinho Palhaçitos sabor cebola 100g",
+        descricaoDetalhada: "Deixa você burro também mas pelo menos é de cebola, coisa boa.",
+        preco: 4.50,
+        precoAntigo: 6.50,
+        imagem: "https://i.ibb.co/RkB4WB5T/Gemini-Generated-Image-ggvtiuggvtiuggvt.png",
+        avaliacoes: [
+          { autor: "ceboleiro_maluco", nota: 3, texto: "Fiquei com o raciocínio lento, mas o hálito de cebola compensa tudo!" },
+          { autor: "marina_pires", nota: 4, texto: "Pelo menos é de cebola, coisa boa demais. Adorei o tempero." },
+          { autor: "kleber_silva", nota: 3, texto: "Esqueci a tabuada do 2, mas o gosto de cebola é sensacional." },
+          { autor: "vanessa_souza", nota: 4, texto: "O aroma é forte e marcante. Só não recomendo fazer prova logo após comer." },
+          { autor: "tiago_lima", nota: 3, texto: "Mente confusa, mas o sabor de cebola é o melhor disparado." },
+          { autor: "camila_rocha", nota: 4, texto: "Coisa boa! Dei boas risadas com os amigos enquanto comíamos." },
+          { autor: "bruno_cardoso", nota: 3, texto: "Perdi meus neurônios temporariamente, mas ganhei satisfação gustativa." },
+          { autor: "fernanda_costa", nota: 4, texto: "Sabor delicioso de cebola, mesmo que dê uma leve desligada no cérebro." },
+          { autor: "diego_mendes", nota: 3, texto: "Recomendo para quem gosta de petiscos com personalidade forte." },
+          { autor: "gabriela_lima", nota: 4, texto: "Pelo menos é de cebola, coisa boa! Nota 4 pela crocância e tempero." }
+        ]
+      },
+      {
+        id: 3,
+        nome: "Salgadinho Palhaçitos sabor churrasco 100g",
+        descricaoDetalhada: "Deixa burro porém churrasco churrasco churrasco churrasco chuuu churrasco",
+        preco: 4.50,
+        precoAntigo: 6.50,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_oouue4oouue4oouu",
+        avaliacoes: [
+          { autor: "churrasqueiro_doido", nota: 5, texto: "O gosto defumado lembra picanha na brasa, simplesmente irresistível!" },
+          { autor: "master_chef", nota: 4, texto: "Deixa a mente meio aérea, mas o tempero de carne na brasa é impecável." },
+          { autor: "ze_ninguem", nota: 5, texto: "Minha mente apagou por um instante, mas parecia que eu estava num rodízio." },
+          { autor: "pedrinho_fogo", nota: 4, texto: "Comi e fiquei com vontade de acender uma churrasqueira às 3 da manhã." },
+          { autor: "larissa_carneiro", nota: 5, texto: "Nota máxima pela insanidade deliciosa desse salgadinho." },
+          { autor: "marcos_picanha", nota: 4, texto: "Efeito colateral divertido e gosto de churrasco muito autêntico." },
+          { autor: "claudio_boi", nota: 5, texto: "O melhor de todos os sabores da linha Palhaçitos, sem dúvida." },
+          { autor: "renata_grill", nota: 4, texto: "Lembra bastante um churrasco de domingo em família." },
+          { autor: "joao_fogo", nota: 5, texto: "Crocante, defumado e viciante demais!" },
+          { autor: "aline_costela", nota: 4, texto: "Muito bom, mesmo perdendo metade dos pensamentos racionais no processo." }
+        ]
+      },
+      {
+        id: 4,
+        nome: "Salgadinho Palhaçitos sabor chocolate 100g (Edição limitada)",
+        descricaoDetalhada: "Chocolate com milho com salgadinho e com burrice também, que coisa estranha. Eu não compro isso daí não.",
+        preco: 5.50,
+        precoAntigo: 8.00,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_1d1ju1d1ju1d1ju1",
+        avaliacoes: [
+          { autor: "cético_total", nota: 1, texto: "Eu não compro isso daí não, ganhei de brinde e me arrependi amargamente." },
+          { autor: "julia_sweet", nota: 2, texto: "Chocolate com milho e salgado? Mistura bizarra que não deu certo." },
+          { autor: "critico_gastronomico", nota: 1, texto: "Combinação sem cabimento nenhum na culinária moderna." },
+          { autor: "felipe_bizarre", nota: 2, texto: "Deixa a mente confusa e ainda tem um retrogosto muito esquisito." },
+          { autor: "sandra_luz", nota: 1, texto: "Achei medonho de ruim. Fujam dessa edição limitada!" },
+          { autor: "marcio_silva", nota: 1, texto: "Concordo plenamente com o aviso: corram longe disso." },
+          { autor: "beatriz_lima", nota: 2, texto: "Experiência exótica demais para o meu paladar." },
+          { autor: "igor_souza", nota: 1, texto: "Pior invenção que já vi na prateleira de um mercado." },
+          { autor: "tatiane_rocha", nota: 1, texto: "Incomível. Duas mordidas foram suficientes para ir pro lixo." },
+          { autor: "carlos_eduardo", nota: 2, texto: "Criatividade passou dos limites da loucura aqui." }
+        ]
+      },
+      {
+        id: 5,
+        nome: "Kit triplo Palhaçitos",
+        descricaoDetalhada: "Vem original, cebola e churrasco. Triplo de Palhaçitos, triplo de burrice. (eu acho)",
+        preco: 12.00,
+        precoAntigo: 16.00,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_9afajx9afajx9afa",
+        avaliacoes: [
+          { autor: "economico_2026", nota: 5, texto: "Levar os três sabores de uma vez economiza frete e garante a zoeira." },
+          { autor: "fome_infinita", nota: 4, texto: "Comi os três pacotes seguidos vendo série e virei uma ameba feliz." },
+          { autor: "lucas_triplo", nota: 5, texto: "Original, cebola e churrasco juntos formam o combo perfeito." },
+          { autor: "mariana_kit", nota: 4, texto: "Ótimo custo-benefício para quem quer testar todos os sabores clássicos." },
+          { autor: "paulo_silva", nota: 5, texto: "Vale muito a pena para dividir com a galera no final de semana." },
+          { autor: "renato_gato", nota: 4, texto: "Kit perfeito para festas onde o objetivo é dar risada." },
+          { autor: "carla_m", nota: 5, texto: "Variedade excelente e preço camarada." },
+          { autor: "thiago_nogueira", nota: 4, texto: "Chegou direitinho e bem embalado na caixa." },
+          { autor: "fabio_junior", nota: 5, texto: "Pacotes bem cheios e crocantes. Recomendo demais!" },
+          { autor: "juliana_costa", nota: 4, texto: "Excelente para quem é indeciso e quer levar um pouco de cada." }
+        ]
+      },
+      {
+        id: 6,
+        nome: "Sopa de cebola e salsa",
+        descricaoDetalhada: "\"Tenta falar sopa de cebola e salsa sem fechar a boca\" -Tonhão, querido professor de inglês. Essa sopa é boa kkkkk.",
+        preco: 5.00,
+        precoAntigo: null,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_8ijcgh8ijcgh8ijc",
+        avaliacoes: [
+          { autor: "aluno_tonhao", nota: 5, texto: "Tentei pronunciar o nome inteiro na frente da turma e paguei mico kkkkk." },
+          { autor: "student_english", nota: 5, texto: "O professor Tonhão é lendário, e a sopa esquenta muito bem no frio." },
+          { autor: "maria_salsa", nota: 4, texto: "Quase desloquei o maxilar tentando falar sem encostar os lábios, mas é deliciosa." },
+          { autor: "carlos_idioma", nota: 5, texto: "Homenagem fantástica às aulas mais caóticas da escola kkkkk." },
+          { autor: "beatriz_eng", nota: 4, texto: "Desafio linguístico aprovado! O sabor de salsa é muito aconchegante." },
+          { autor: "marcos_linguas", nota: 5, texto: "Tonhão choraria de emoção vendo essa sopa no cardápio." },
+          { autor: "ana_sopa", nota: 4, texto: "Caldo encorpado e tempero na medida certa." },
+          { autor: "pedro_cebola", nota: 5, texto: "Comi jantando e rindo sozinho igual um bobo." },
+          { autor: "julia_ingles", nota: 4, texto: "Nota 10 pela criatividade do nome e qualidade do caldo." },
+          { autor: "lucas_riso", nota: 5, texto: "Simplesmente reconfortante e divertida de preparar." }
+        ]
+      },
+      {
+        id: 7,
+        nome: "Cacete",
+        descricaoDetalhada: "Cacete não significa xingamento e sim um pedaço de madeira, e posso afirmar isso pela trigésima sexta vez.",
+        preco: 0.01,
+        precoAntigo: 0.02,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_hk2s91hk2s91hk2s",
+        avaliacoes: [
+          { autor: "professor_portugues", nota: 5, texto: "Excelente para cultuar a Língua Portuguesa e esclarecer ambiguidades seculares!" },
+          { autor: "etimologista", nota: 5, texto: "Rigor histórico impecável neste produto educativo." },
+          { autor: "carlos_letras", nota: 4, texto: "Comprei por um centavo para usar como peso de papel na minha mesa." },
+          { autor: "maria_cultura", nota: 5, texto: "Adorei a aula de vocabulário embutida na descrição." },
+          { autor: "joao_pedagogia", nota: 5, texto: "Já é a trigésima sétima vez que leio sobre isso e continuo achando genial." },
+          { autor: "lucas_dicionario", nota: 4, texto: "Preço simbólico para um item de utilidade pública." },
+          { autor: "ana_gramatica", nota: 5, texto: "Perfeito para presentear amigos que usam termos incorretamente." },
+          { autor: "roberto_ensino", nota: 5, texto: "Lição assimilada com sucesso. É madeira de lei!" },
+          { autor: "fernanda_livros", nota: 4, texto: "Curioso e muito divertido para se ter em casa." },
+          { autor: "pedro_filologo", nota: 5, texto: "Nota máxima pelo compromisso com o dicionário aurélio." }
+        ]
+      },
+      {
+        id: 8,
+        nome: "Joystick azul (Esquerda não funciona)",
+        descricaoDetalhada: "O povo é louco pelo fliperama, tanto que simplismente quebraram o joystick azul estourando ele no jogos de luta e agora a esquerda não funciona. Todo mundo já tentou ajeitar, mas nunca resolveu, e tá assim até agora.",
+        preco: 6.00,
+        precoAntigo: 7.00,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_ba6kirba6kirba6k",
+        avaliacoes: [
+          { autor: "carlinhos_sf", nota: 1, texto: "Meu personagem só dá soco no ar e não anda pra trás de jeito nenhum." },
+          { autor: "marcio_arcade", nota: 2, texto: "Tentei ressoldar a placa interna, mas o comando esquerdo continua morto." },
+          { autor: "renato_luta", nota: 1, texto: "Perdi todas as partidas do campeonato por causa desse analógico travado." },
+          { autor: "felipe_gamer", nota: 2, texto: "Peça clássica de fliperama raiz que sofreu maus tratos na mão da galera." },
+          { autor: "bruno_brawler", nota: 1, texto: "Fiquei encurralado no canto da tela o round inteiro. Trágico!" },
+          { autor: "DIEGO_KOF", nota: 2, texto: "Ninguém nunca conseguiu consertar essa carniça, faz parte da tradição." },
+          { autor: "lucas_fliperama", nota: 1, texto: "Estourado de tanto o pessoal espancar nos fliperamas antigos." },
+          { autor: "tiago_retro", nota: 2, texto: "Bom apenas para colecionadores de relíquias defeituosas." },
+          { autor: "andre_fight", nota: 1, texto: "Se você quer esquivar para a esquerda, passe longe desta unidade." },
+          { autor: "gabriel_player", nota: 1, texto: "Frustrante de jogar, mas serve como item de decoração engraçado." }
+        ]
+      },
+      {
+        id: 9,
+        nome: "Joystick vermelho",
+        descricaoDetalhada: "Como o joystick azul tem um defeito bizarro, ele é o queridinho do povo, se você ficar com ele num x1 no fliperama, é quase 100% de chance que você vai ganhar.",
+        preco: 9.00,
+        precoAntigo: 10.00,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_77dvx977dvx977dv",
+        avaliacoes: [
+          { autor: "campeao_arcade", nota: 5, texto: "Segurar este controle garante uma vantagem psicológica absurda no x1!" },
+          { autor: "rei_do_x1", nota: 5, texto: "Simplesmente imbatível! Todos os comandos respondem com precisão milimétrica." },
+          { autor: "marcos_campeao", nota: 4, texto: "O queridinho disparado da galera na hora da disputa." },
+          { autor: "lucas_vitorioso", nota: 5, texto: "Fiz um Corujão invicto usando apenas este joystick vermelho." },
+          { autor: "pedro_invicto", nota: 5, texto: "Melhor investimento para quem odeia perder no arcade." },
+          { autor: "joao_arcade", nota: 4, texto: "Ergonômico, firme e sem nenhum defeito de fabricação." },
+          { autor: "carlos_x1", nota: 5, texto: "Taxa de vitória subiu para quase 100% depois que troquei de lado." },
+          { autor: "rafael_pro", nota: 5, texto: "O verdadeiro rei da mesa de jogos." },
+          { autor: "felipe_campeao", nota: 4, texto: "Solta Hadouken de primeira, excelente resposta nos botões." },
+          { autor: "bruno_vencedor", nota: 5, texto: "Quem pega o vermelho já entra na partida com meio caminho andado." }
+        ]
+      },
+      {
+        id: 10,
+        nome: "Carteira do Tadashi",
+        descricaoDetalhada: "Cheio de dinheiro, aí vale demais 😎",
+        preco: 50.00,
+        precoAntigo: null,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/D_NQ_NP_2X_945296-MLB111049198151_042026-F-carteira-de-times-masculina-porta-cartao-fecho-ziper-present",
+        avaliacoes: [
+          { autor: "tadashi_fan", nota: 5, texto: "Abri o zíper e tinha maços de notas enroladas em elástico, surreal!" },
+          { autor: "ricardo_rico", nota: 5, texto: "Melhor compra do site, o lucro superou o valor pago com folga." },
+          { autor: "marcio_sorte", nota: 5, texto: "O bolso interno veio recheado de cédulas antigas valiosas." },
+          { autor: "lucas_milionario", nota: 5, texto: "Paguei cinquenta contos e achei o dobro logo na primeira conferida." },
+          { autor: "amigo_do_tadashi", nota: 5, texto: "O Tadashi realmente não economiza quando deixa algo para trás." },
+          { autor: "carlos_investidor", nota: 4, texto: "Couro legítimo e acabamento excelente, além do bônus financeiro." },
+          { autor: "felipe_sortudo", nota: 5, texto: "Sensação maravilhosa de achar dinheiro perdido em bolso de casaco." },
+          { autor: "joao_bolso_cheio", nota: 5, texto: "Nota máxima pela surpresa agradável dentro do compartimento." },
+          { autor: "paulo_dinheiro", nota: 5, texto: "Valeu cada centavo investido, recomendo de olhos fechados." },
+          { autor: "roberto_luxo", nota: 5, texto: "Estilo elegante e recheado de prosperidade." }
+        ]
+      },
+      {
+        id: 11,
+        nome: "Estojo do Ruan perdido",
+        descricaoDetalhada: "Estojo misterioso que pertenceu ao Ruan em algum lugar do multiverso acadêmico.",
+        preco: 15.00,
+        precoAntigo: 20.00,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/estojo-simples-nylon-70-grande-preto-tratorad-reflex-pct-c-04-614f5841-ifi3jhji9s",
+        avisoInexistente: true,
+        avaliacoes: [
+          { autor: "ruan_perdido", nota: 1, texto: "Caramba, achei o estojo que sumiu no fundo da minha gaveta há três anos!" },
+          { autor: "aluno_confuso", nota: 1, texto: "Tentei comprar mas o produto evaporou antes de fechar o pedido." },
+          { autor: "professor_turma", nota: 2, texto: "Esse modelo de estojo tem pernas e foge sozinho da carteira." },
+          { autor: "marina_perdida", nota: 1, texto: "Lenda urbana viva: todo mundo conhece o Ruan, mas ninguém acha o estojo dele." },
+          { autor: "carlos_escola", nota: 1, texto: "Item fantasma catalogado com sucesso no sistema." },
+          { autor: "pedro_chibi", nota: 2, texto: "Revirei a sala inteira e nada de achar vestígios físicos." },
+          { autor: "lucas_mochila", nota: 1, texto: "Sumiu misteriosamente do carrinho assim que cliquei em comprar." },
+          { autor: "ana_estudante", nota: 1, texto: "Alguém avisa o Ruan que o estojo dele virou objeto de estudo sobrenatural." },
+          { autor: "julia_misterio", nota: 2, texto: "Misterioso e intangível, adorei a brincadeira do site." },
+          { autor: "fernando_bau", nota: 1, texto: "Perdido para sempre nas dimensões paralelas da escola." }
+        ]
+      },
+      {
+        id: 12,
+        nome: "Iplung 22 pro ultra diamond gold mega plus",
+        descricaoDetalhada: "Além de uma câmera com uma qualidade de 256k HD plus e um sistema do interior do celular extraordinário, tem uma função nova que deixa ele invisível para os outros, e só você pode ver, porém só pode usar esse função gratuitamente 3 vezes, depois paga 50 reais. Ótimo para usar na sala de aula com essa função",
+        preco: 100000.00,
+        precoAntigo: 120000.00,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_wnxourwnxourwnxo",
+        avaliacoes: [
+          { autor: "aluno_esperto", nota: 5, texto: "A função invisível é perfeita para mexer no celular durante a aula de matemática sem o professor ver!" },
+          { autor: "professor_atento", nota: 1, texto: "Eu sei que vocês estão mexendo em algo invisível, não pensem que me enganam!" },
+          { autor: "carlos_geek", nota: 5, texto: "Câmera de 256k HD plus absurda, qualidade de outra galáxia." },
+          { autor: "mari_tech", nota: 4, texto: "Funciona perfeitamente, mas tomei susto quando gastei os 3 usos gratuitos." },
+          { autor: "joao_celular", nota: 5, texto: "O celular mais tecnológico e secreto do mercado estudantil." },
+          { autor: "pedro_invisivel", nota: 5, texto: "Ninguém acredita quando mostro as fotos tiradas em alta resolução." },
+          { autor: "bia_estudante", nota: 4, texto: "Preço alto, mas vale pela exclusividade da invisibilidade." },
+          { autor: "lucas_ultra", nota: 5, texto: "ダイヤモンド gold mega plus supremo!" },
+          { autor: "ana_furtiva", nota: 5, text: "Salvou minha vida nas aulas mais chatas do semestre." },
+          { autor: "roberto_vip", nota: 5, texto: "Status máximo garantido para quem usa." }
+        ]
+      },
+      {
+        id: 15,
+        nome: "Arma Pula-Aula",
+        descricaoDetalhada: "Com essa arma você pode gerar um portal que pula exatamente 50 minutos no tempo, o tempo exato de uma aula.",
+        preco: 175.00,
+        precoAntigo: 200.00,
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_l5butxl5butxl5bu",
+        avaliacoes: [
+          { autor: "aluno_fugitivo", nota: 5, texto: "Disparei no chão da sala e pulei direto para o recreio. Perfeito!" },
+          { autor: "carlos_cronos", nota: 5, texto: "A melhor invenção para evitar aquela aula insuportável de sexta-feira." },
+          { autor: "mari_tempo", nota: 4, texto: "Funciona certinho, 50 minutos a menos de sofrimento." },
+          { autor: "joao_portal", nota: 5, texto: "O portal abre na hora e o tempo passa voando." },
+          { autor: "pedro_aula", nota: 5, texto: "Meus amigos acham que eu desapareço por magia." },
+          { autor: "bia_cronos", nota: 4, texto: "Ótimo custo-benefício pelo tempo economizado." },
+          { autor: "lucas_futuro", nota: 5, texto: "Salvador da pátria estudantil!" },
+          { autor: "ana_viajante", nota: 5, texto: "Simplesmente genial, recomendo demais." },
+          { autor: "roberto_tempo", nota: 4, texto: "Só cuidado para não errar a mira e pular a hora do almoço." },
+          { autor: "gabriel_aula", nota: 5, texto: "Nota máxima pela praticidade temporal." }
+        ]
+      }
+    ];
+
+    let carrinho = [];
+    let indiceBannerAtual = 0;
+    const totalBanners = 3;
+
+    function mudarBanner(direcao) {
+      indiceBannerAtual += direcao;
+      if (indiceBannerAtual < 0) indiceBannerAtual = totalBanners - 1;
+      if (indiceBannerAtual >= totalBanners) indiceBannerAtual = 0;
+      atualizarBanner();
+    }
+
+    function irParaBanner(indice) {
+      indiceBannerAtual = indice;
+      atualizarBanner();
+    }
+
+    function atualizarBanner() {
+      const track = document.getElementById('banner-track');
+      track.style.transform = `translateX(-${indiceBannerAtual * 100}%)`;
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, index) => {
+        if (index === indiceBannerAtual) {
+          dot.classList.add('ativo');
+        } else {
+          dot.classList.remove('ativo');
+        }
+      });
+    }
+
+    function mostrarSecao(idSecao) {
+      const secoes = document.querySelectorAll('.secao');
+      secoes.forEach(s => s.classList.remove('ativa'));
+      document.getElementById(idSecao).classList.add('ativa');
+      window.scrollTo(0, 0);
+    }
+
+    function renderizarProdutos() {
+      const grid = document.getElementById('grid-produtos');
+      grid.innerHTML = '';
+
+      listaProdutos.forEach(prod => {
+        let mediaEstrelas = 0;
+        if (prod.avaliacoes && prod.avaliacoes.length > 0) {
+          let soma = prod.avaliacoes.reduce((acc, curr) => acc + curr.nota, 0);
+          mediaEstrelas = (soma / prod.avaliacoes.length).toFixed(1);
+        }
+
+        let card = document.createElement('div');
+        card.className = 'card-produto';
+        card.innerHTML = `
+          <div>
+            <img src="${prod.imagem}" alt="${prod.nome}" onclick="abrirDetalhe(${prod.id})" style="cursor: pointer;">
+            <h3 onclick="abrirDetalhe(${prod.id})" style="cursor: pointer;">${prod.nome}</h3>
+            <div class="card-estrelas">⭐ ${mediaEstrelas} (${prod.avaliacoes ? prod.avaliacoes.length : 0})</div>
+            <div>
+              ${prod.precoAntigo ? `<span class="preco-antigo">R$ ${prod.precoAntigo.toFixed(2)}</span>` : ''}
+              <span class="${prod.precoAntigo ? 'preco' : 'preco-normal'}">R$ ${prod.preco.toFixed(2)}</span>
+            </div>
+          </div>
+          <div>
+            <div class="quantidade-box" onclick="event.stopPropagation()">
+              <label>Qtd:</label>
+              <input type="number" id="qtd-${prod.id}" value="1" min="1">
+            </div>
+            <button class="btn-acao" onclick="adicionarAoCarrinho(${prod.id})">Adicionar ao Carrinho</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function abrirDetalhe(id) {
+      const prod = listaProdutos.find(p => p.id === id);
+      if (!prod) return;
+
+      let somaNotas = 0;
+      let contagemNotas = [0, 0, 0, 0, 0, 0]; 
+      if (prod.avaliacoes && prod.avaliacoes.length > 0) {
+        prod.avaliacoes.forEach(a => {
+          somaNotas += a.nota;
+          if(a.nota >= 1 && a.nota <= 5) contagemNotas[a.nota]++;
+        });
+      }
+      let media = prod.avaliacoes.length > 0 ? (somaNotas / prod.avaliacoes.length).toFixed(1) : 0;
+      let totalAval = prod.avaliacoes.length;
+
+      let htmlComentarios = '';
+      if (prod.avaliacoes && prod.avaliacoes.length > 0) {
+        prod.avaliacoes.forEach(a => {
+          let estrelasStr = '⭐'.repeat(a.nota);
+          htmlComentarios += `
+            <div class="comentario-card">
+              <div class="comentario-autor">
+                <span>@${a.autor}</span>
+                <span class="comentario-nota">${estrelasStr}</span>
+              </div>
+              <div class="comentario-texto">${a.texto}</div>
+            </div>
+          `;
+        });
+      } else {
+        htmlComentarios = '<p>Ainda não há avaliações para este produto.</p>';
+      }
+
+      let barrasHtml = '';
+      for(let i = 5; i >= 1; i--) {
+        let porcentagem = totalAval > 0 ? (contagemNotas[i] / totalAval) * 100 : 0;
+        barrasHtml += `
+          <div class="linha-barra">
+            <span>${i}★</span>
+            <div class="barra-fundo"><div class="barra-preenchida" style="width: ${porcentagem}%"></div></div>
+            <span>${contagemNotas[i]}</span>
+          </div>
+        `;
+      }
+
+      const containerDetalhe = document.getElementById('conteudo-detalhe');
+      containerDetalhe.innerHTML = `
+        <div class="detalhe-produto-imagem">
+          <img src="${prod.imagem}" alt="${prod.nome}">
+        </div>
+        <div class="detalhe-produto-info">
+          <h2>${prod.nome}</h2>
+          ${prod.precoAntigo ? `<span class="preco-antigo" style="font-size: 18px;">R$ ${prod.precoAntigo.toFixed(2)}</span>` : ''}
+          <div class="${prod.precoAntigo ? 'preco-grande' : 'preco-grande-normal'}">R$ ${prod.preco.toFixed(2)}</div>
+          <p class="descricao-longa">${prod.descricaoDetalhada}</p>
+          
+          <div class="quantidade-box" style="justify-content: flex-start; margin-bottom: 15px;">
+            <label>Quantidade:</label>
+            <input type="number" id="qtd-detalhe-${prod.id}" value="1" min="1">
+          </div>
+          
+          <button class="btn-acao" onclick="adicionarAoCarrinhoDetalhe(${prod.id})" style="max-width: 250px;">Adicionar ao Carrinho</button>
+
+          <div class="secao-avaliacoes">
+            <h3>Avaliações dos Clientes</h3>
+            
+            <div class="painel-resumo-avaliacoes">
+              <div class="bloco-media-grande">
+                <div class="numero-media-gigante">${media}</div>
+                <div class="estrelas-gigantes">⭐</div>
+                <div class="total-avaliacoes-texto">Com base em ${totalAval} avaliações</div>
+              </div>
+              <div class="barras-distribuicao">
+                ${barrasHtml}
+              </div>
+            </div>
+
+            <div class="lista-comentarios">
+              ${htmlComentarios}
+            </div>
+          </div>
+        </div>
+      `;
+
+      mostrarSecao('detalhe-produto');
+    }
+
+    function adicionarAoCarrinho(id) {
+      const qtdInput = document.getElementById(`qtd-${id}`);
+      const quantidade = parseInt(qtdInput.value) || 1;
+      adicionarLogicaCarrinho(id, quantidade);
+    }
+
+    function adicionarAoCarrinhoDetalhe(id) {
+      const qtdInput = document.getElementById(`qtd-detalhe-${id}`);
+      const quantidade = parseInt(qtdInput.value) || 1;
+      adicionarLogicaCarrinho(id, quantidade);
+    }
+
+    function adicionarLogicaCarrinho(id, quantidade) {
+      const prod = listaProdutos.find(p => p.id === id);
+      if (!prod) return;
+
+      const itemExistente = carrinho.find(item => item.id === id);
+      if (itemExistente) {
+        itemExistente.quantidade += quantidade;
+      } else {
+        carrinho.push({
+          id: prod.id,
+          nome: prod.nome,
+          preco: prod.preco,
+          quantidade: quantidade
+        });
+      }
+
+      atualizarCarrinhoUI();
+      alert(`${quantidade}x "${prod.nome}" adicionado(s) ao carrinho!`);
+    }
+
+    function atualizarCarrinhoUI() {
+      const contador = document.getElementById('contador-carrinho');
+      const listaCarrinho = document.getElementById('lista-carrinho');
+      const valorTotal = document.getElementById('valor-total');
+      const btnIrPagamento = document.getElementById('btn-ir-pagamento');
+
+      let totalItens = 0;
+      let precoTotal = 0;
+
+      if (carrinho.length === 0) {
+        listaCarrinho.innerHTML = '<p>Seu carrinho está vazio.</p>';
+        btnIrPagamento.style.display = 'none';
+      } else {
+        let html = '';
+        carrinho.forEach(item => {
+          totalItens += item.quantidade;
+          let subtotal = item.preco * item.quantidade;
+          precoTotal += subtotal;
+
+          html += `
+            <div class="item-carrinho">
+              <div>
+                <strong>${item.nome}</strong><br>
+                <small>Qtd: ${item.quantidade} x R$ ${item.preco.toFixed(2)}</small>
+              </div>
+              <div>
+                <span>R$ ${subtotal.toFixed(2)}</span>
+                <button class="btn-secundario" onclick="removerItem(${item.id})" style="margin-left: 10px; padding: 2px 6px;">Remover</button>
+              </div>
+            </div>
+          `;
+        });
+        listaCarrinho.innerHTML = html;
+        btnIrPagamento.style.display = 'block';
+      }
+
+      contador.innerText = totalItens;
+      valorTotal.innerText = precoTotal.toFixed(2);
+    }
+
+    function removerItem(id) {
+      carrinho = carrinho.filter(item => item.id !== id);
+      atualizarCarrinhoUI();
+    }
+
+    function realizarPagamento(event) {
+      event.preventDefault();
+      const numPedidoAleatorio = Math.floor(100000 + Math.random() * 900000);
+      const formaPgto = document.getElementById('forma-pagamento').value;
+
+      document.getElementById('numero-pedido').innerText = numPedidoAleatorio;
+      document.getElementById('pagamento-escolhido').innerText = formaPgto;
+
+      carrinho = [];
+      atualizarCarrinhoUI();
+
+      mostrarSecao('status');
+    }
+
+    function reiniciarLoja() {
+      mostrarSecao('produtos');
+    }
+
+    window.onload = function() {
+      renderizarProdutos();
+    }
+  </script>
+</body>
+</html>
