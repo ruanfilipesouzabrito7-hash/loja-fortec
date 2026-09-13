@@ -3,125 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loja Fictícia - Demonstração</title>
+  <title>Fortec Loja - Demonstração</title>
   <style>
     /* Estilos Gerais */
     * { box-sizing: border-box; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    body { background-color: #f4f4f9; color: #333; padding-bottom: 50px; }
+    
+    /* Fundo em gradiente animado entre preto e azul escuro */
+    body { 
+      background: linear-gradient(-45deg, #000000, #050510, #0a1128, #000000);
+      background-size: 400% 400%;
+      animation: gradienteAnimado 12s ease infinite;
+      color: #ffffff; 
+      padding-bottom: 50px; 
+    }
+
+    @keyframes gradienteAnimado {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
     
     /* Cabeçalho */
-    header { background: #1e293b; color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { color: #ffffff; font-size: 22px; }
+    header { background: #090d16; color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1e293b; }
+    .header-logo { display: flex; align-items: center; gap: 12px; }
+    .header-logo h1 { color: #ffffff; font-size: 22px; }
+    .icone-logo { width: 28px; height: 28px; fill: none; stroke: white; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     
     /* Navegação com ícones brancos e alinhada à esquerda */
-    nav { background: #0f172a; padding: 10px 40px; display: flex; gap: 20px; justify-content: flex-start; align-items: center; }
+    nav { background: #040711; padding: 10px 40px; display: flex; gap: 20px; justify-content: flex-start; align-items: center; border-bottom: 1px solid #1e293b; }
     nav button { background: none; border: none; color: white; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    nav button:hover { text-decoration: underline; }
+    nav button:hover { text-decoration: underline; color: #60a5fa; }
     
     /* Estilo dos ícones vetoriais brancos */
     .icone-svg { width: 18px; height: 18px; fill: white; }
 
-    /* Container */
-    .container { width: 100%; max-width: 100%; margin: 0; padding: 20px 40px; background: white; min-height: 80vh; }
+    /* Container com fundo semitransparente para integrar com o gradiente */
+    .container { width: 100%; max-width: 100%; margin: 0; padding: 20px 40px; background: rgba(10, 15, 29, 0.7); min-height: 80vh; }
     
-    .alerta-falso { background: #ffe4e6; color: #9f1239; border: 1px solid #f43f5e; padding: 15px; border-radius: 5px; text-align: center; margin-bottom: 20px; font-weight: bold; }
+    .alerta-falso { background: #4c0519; color: #fecdd3; border: 1px solid #e11d48; padding: 15px; border-radius: 5px; text-align: center; margin-bottom: 20px; font-weight: bold; }
 
     /* BANNER POSICIONADO À ESQUERDA */
-    .banner-container { position: relative; width: 100%; max-width: 800px; height: 220px; margin: 0 0 25px 0; overflow: hidden; border-radius: 8px; background: #f1f5f9; border: 1px solid #ddd; }
+    .banner-container { position: relative; width: 100%; max-width: 800px; height: 220px; margin: 0 0 25px 0; overflow: hidden; border-radius: 8px; background: #0f172a; border: 1px solid #1e293b; }
     
     .banner-track { display: flex; width: 100%; height: 100%; transition: transform 0.5s ease-in-out; }
     
-    .banner-slide { min-width: 100%; height: 100%; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background-color: #ffffff; position: relative; }
+    .banner-slide { min-width: 100%; height: 100%; flex-shrink: 0; display: flex; justify-content: center; align-items: center; background-color: #0b0f19; position: relative; }
     
     .banner-slide img { width: 100%; height: 100%; object-fit: cover; display: block; z-index: 1; position: relative; }
 
     /* Botões do Banner */
-    .banner-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: white; border: none; font-size: 18px; padding: 8px 12px; cursor: pointer; border-radius: 4px; user-select: none; z-index: 2; }
-    .banner-btn:hover { background: rgba(0,0,0,0.8); }
+    .banner-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; font-size: 18px; padding: 8px 12px; cursor: pointer; border-radius: 4px; user-select: none; z-index: 2; }
+    .banner-btn:hover { background: rgba(0,0,0,0.9); }
     .banner-btn.prev { left: 10px; }
     .banner-btn.next { right: 10px; }
 
     .banner-dots { position: absolute; bottom: 8px; width: 100%; text-align: center; z-index: 2; }
-    .dot { display: inline-block; width: 8px; height: 8px; background: rgba(0,0,0,0.3); border-radius: 50%; margin: 0 4px; cursor: pointer; transition: background 0.3s; }
-    .dot.ativo { background: #1e293b; width: 10px; height: 10px; }
+    .dot { display: inline-block; width: 8px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 50%; margin: 0 4px; cursor: pointer; transition: background 0.3s; }
+    .dot.ativo { background: #38bdf8; width: 10px; height: 10px; }
 
     /* Grid de Produtos com largura reduzida e cards quadrangulares */
     .produtos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; max-width: 1100px; }
-    .card-produto { border: 1px solid #ddd; padding: 12px; border-radius: 5px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: transform 0.2s; background: #fff; }
-    .card-produto:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    .card-produto { border: 1px solid #1e293b; padding: 12px; border-radius: 5px; text-align: center; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; transition: transform 0.2s, border-color 0.2s; background: #0f172a; color: #ffffff; }
+    .card-produto:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.5); border-color: #1e3a8a; }
     
     /* Imagem quadrangular */
     .card-produto img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 5px; }
     
-    .card-produto h3 { margin: 8px 0 4px; font-size: 15px; }
-    .card-produto .preco { font-size: 16px; font-weight: bold; color: #16a34a; margin: 4px 0; }
-    .preco-normal { font-size: 16px; font-weight: bold; color: #000000; margin: 4px 0; }
+    .card-produto h3 { margin: 8px 0 4px; font-size: 15px; color: #ffffff; }
+    .card-produto .preco { font-size: 16px; font-weight: bold; color: #4ade80; margin: 4px 0; }
+    .preco-normal { font-size: 16px; font-weight: bold; color: #ffffff; margin: 4px 0; }
     .preco-antigo { text-decoration: line-through; color: #9ca3af; font-size: 13px; margin-right: 5px; font-weight: normal; }
     
-    .card-estrelas { font-size: 13px; color: #d97706; margin-bottom: 4px; }
+    .card-estrelas { font-size: 13px; color: #fbbf24; margin-bottom: 4px; }
 
     /* Controles de Quantidade */
     .quantidade-box { display: flex; align-items: center; justify-content: center; gap: 5px; margin: 6px 0; }
-    .quantidade-box label { font-size: 12px; font-weight: bold; }
-    .quantidade-box input { width: 45px; text-align: center; padding: 3px; border: 1px solid #ccc; border-radius: 4px; }
+    .quantidade-box label { font-size: 12px; font-weight: bold; color: #e2e8f0; }
+    .quantidade-box input { width: 45px; text-align: center; padding: 3px; border: 1px solid #334155; border-radius: 4px; background: #1e293b; color: #ffffff; }
 
-    /* Botões */
-    button.btn-acao { background: #2563eb; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 13px; width: 100%; margin-top: 4px; }
-    button.btn-acao:hover { background: #1d4ed8; }
-    button.btn-secundario { background: #e2e8f0; color: #333; border: none; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 13px; }
-    button.btn-secundario:hover { background: #cbd5e1; }
+    /* Botões - Cor escurecida para azul escuro */
+    button.btn-acao { background: #1e3a8a; color: white; border: 1px solid #3b82f6; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 13px; width: 100%; margin-top: 4px; transition: background 0.2s; }
+    button.btn-acao:hover { background: #1e40af; }
+    button.btn-secundario { background: #1e293b; color: #ffffff; border: 1px solid #334155; padding: 6px 10px; border-radius: 5px; cursor: pointer; font-size: 13px; }
+    button.btn-secundario:hover { background: #334155; }
 
     /* Página do Produto Detalhada */
-    .detalhe-produto-container { display: flex; flex-wrap: wrap; gap: 30px; }
+    .detalhe-produto-container { display: flex; flex-wrap: wrap; gap: 30px; color: #ffffff; }
     .detalhe-produto-imagem { flex: 1; min-width: 250px; max-width: 350px; }
-    .detalhe-produto-imagem img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+    .detalhe-produto-imagem img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; border: 1px solid #1e293b; }
     .detalhe-produto-info { flex: 1.5; min-width: 300px; }
-    .detalhe-produto-info h2 { font-size: 24px; margin-bottom: 10px; }
-    .detalhe-produto-info .preco-grande { font-size: 26px; color: #16a34a; font-weight: bold; margin: 10px 0; }
-    .detalhe-produto-info .preco-grande-normal { font-size: 26px; color: #000000; font-weight: bold; margin: 10px 0; }
-    .detalhe-produto-info .descricao-longa { line-height: 1.6; color: #4b5563; margin-bottom: 20px; }
+    .detalhe-produto-info h2 { font-size: 24px; margin-bottom: 10px; color: #ffffff; }
+    .detalhe-produto-info .preco-grande { font-size: 26px; color: #4ade80; font-weight: bold; margin: 10px 0; }
+    .detalhe-produto-info .preco-grande-normal { font-size: 26px; color: #ffffff; font-weight: bold; margin: 10px 0; }
+    .detalhe-produto-info .descricao-longa { line-height: 1.6; color: #cbd5e1; margin-bottom: 20px; }
 
     /* Seção de Avaliações */
-    .secao-avaliacoes { margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; width: 100%; }
-    .secao-avaliacoes h3 { margin-bottom: 15px; font-size: 18px; }
+    .secao-avaliacoes { margin-top: 30px; border-top: 1px solid #1e293b; padding-top: 20px; width: 100%; }
+    .secao-avaliacoes h3 { margin-bottom: 15px; font-size: 18px; color: #ffffff; }
     
-    .painel-resumo-avaliacoes { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-around; text-align: center; }
+    .painel-resumo-avaliacoes { background: #0f172a; border: 1px solid #1e293b; padding: 20px; border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-style: space-around; text-align: center; }
     .bloco-media-grande { display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .numero-media-gigante { font-size: 42px; font-weight: bold; color: #d97706; line-height: 1; margin-bottom: 8px; }
-    .estrelas-gigantes { font-size: 20px; color: #d97706; margin-bottom: 4px; }
-    .total-avaliacoes-texto { font-size: 13px; color: #64748b; }
+    .numero-media-gigante { font-size: 42px; font-weight: bold; color: #fbbf24; line-height: 1; margin-bottom: 8px; }
+    .estrelas-gigantes { font-size: 20px; color: #fbbf24; margin-bottom: 4px; }
+    .total-avaliacoes-texto { font-size: 13px; color: #94a3b8; }
 
     .barras-distribuicao { flex: 1; min-width: 200px; max-width: 300px; display: flex; flex-direction: column; gap: 6px; }
-    .linha-barra { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #475569; }
-    .barra-fundo { flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
-    .barra-preenchida { height: 100%; background: #d97706; border-radius: 4px; }
+    .linha-barra { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #cbd5e1; }
+    .barra-fundo { flex: 1; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; }
+    .barra-preenchida { height: 100%; background: #fbbf24; border-radius: 4px; }
 
-    .comentario-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 6px; margin-bottom: 10px; }
-    .comentario-autor { font-weight: bold; font-size: 13px; color: #475569; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .comentario-texto { font-size: 14px; color: #334155; }
-    .comentario-nota { color: #d97706; }
+    .comentario-card { background: #0f172a; border: 1px solid #1e293b; padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+    .comentario-autor { font-weight: bold; font-size: 13px; color: #94a3b8; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .comentario-texto { font-size: 14px; color: #e2e8f0; }
+    .comentario-nota { color: #fbbf24; }
 
     /* Carrinho */
-    .item-carrinho { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-    .total-carrinho { font-size: 18px; font-weight: bold; text-align: right; margin-top: 15px; }
+    .item-carrinho { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1e293b; }
+    .total-carrinho { font-size: 18px; font-weight: bold; text-align: right; margin-top: 15px; color: #ffffff; }
 
     /* Seções */
     .secao { display: none; }
     .secao.ativa { display: block; }
 
     /* Status do Pedido */
-    .status-box { text-align: center; padding: 30px; }
-    .status-etapa { display: inline-block; padding: 10px 20px; background: #e2e8f0; margin: 5px; border-radius: 20px; font-size: 14px; }
-    .status-etapa.concluido { background: #22c55e; color: white; }
+    .status-box { text-align: center; padding: 30px; background: #0f172a; border: 1px solid #1e293b; border-radius: 8px; }
+    .status-etapa { display: inline-block; padding: 10px 20px; background: #1e293b; color: #94a3b8; margin: 5px; border-radius: 20px; font-size: 14px; }
+    .status-etapa.concluido { background: #16a34a; color: white; }
     .form-grupo { margin-bottom: 15px; }
-    .form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; }
-    .form-grupo select, .form-grupo input { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+    .form-grupo label { display: block; margin-bottom: 5px; font-weight: bold; color: #ffffff; }
+    .form-grupo select, .form-grupo input { width: 100%; padding: 8px; border: 1px solid #334155; border-radius: 4px; background: #0f172a; color: #ffffff; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Minha Loja Fictícia</h1>
+    <div class="header-logo">
+      <svg class="icone-logo" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+        <line x1="9" y1="9" x2="9.01" y2="9"></line>
+        <line x1="15" y1="9" x2="15.01" y2="9"></line>
+      </svg>
+      <h1>Fortec Loja</h1>
+    </div>
   </header>
 
   <nav>
@@ -137,7 +161,6 @@
 
   <div class="container">
     
-    <!-- AVISO DE SITE FALSO -->
     <div class="alerta-falso">
       ⚠️ ATENÇÃO: ESTE É UM SITE DE DEMONSTRAÇÃO/FALSO. NENHUMA COMPRA REAL SERÁ REALIZADA OU COBRADA.
     </div>
@@ -145,7 +168,6 @@
     <!-- 1. PÁGINA DE PRODUTOS (VITRINE) -->
     <section id="produtos" class="secao ativa">
       
-      <!-- BANNER DE IMAGENS ALINHADO À ESQUERDA -->
       <div class="banner-container">
         <div class="banner-track" id="banner-track">
           <div class="banner-slide">
@@ -153,9 +175,6 @@
           </div>
           <div class="banner-slide">
             <img src="https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/COISAS_DE_FLIPERMA_1" alt="Banner 2 Coisas de Fliperama">
-          </div>
-          <div class="banner-slide">
-            <img src="https://via.placeholder.com/800x220/d97706/ffffff?text=Banner+3+-+Novidades" alt="Banner 3">
           </div>
         </div>
 
@@ -165,7 +184,6 @@
         <div class="banner-dots">
           <span class="dot ativo" onclick="irParaBanner(0)"></span>
           <span class="dot" onclick="irParaBanner(1)"></span>
-          <span class="dot" onclick="irParaBanner(2)"></span>
         </div>
       </div>
 
@@ -215,7 +233,7 @@
           </select>
         </div>
 
-        <p style="margin-bottom: 15px; color: #666; font-size: 13px;">
+        <p style="margin-bottom: 15px; color: #94a3b8; font-size: 13px;">
           * Nenhum dado financeiro real deve ser digitado aqui.
         </p>
 
@@ -226,7 +244,7 @@
     <!-- 5. PÁGINA DE STATUS -->
     <section id="status" class="secao">
       <div class="status-box">
-        <h2 style="color: #16a34a;">🎉 Pedido Realizado com Sucesso!</h2>
+        <h2 style="color: #4ade80;">🎉 Pedido Realizado com Sucesso!</h2>
         <p>Obrigado por testar nossa loja fictícia.</p>
         <br>
         <p><strong>Número do Pedido:</strong> #<span id="numero-pedido"></span></p>
@@ -377,7 +395,7 @@
         precoAntigo: 0.02,
         imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_hk2s91hk2s91hk2s",
         avaliacoes: [
-          { autor: "professor_portugues", nota: 5, texto: "Excelente para cultuar a Língua Portuguesa e esclarecer ambiguidades seculares!" },
+          { autor: "professor_portugues", nota: 5, texto: "Excelente para cultuar a Língua Portuguesa e esclarecer ambiguities seculares!" },
           { autor: "etimologista", nota: 5, texto: "Rigor histórico impecável neste produto educativo." },
           { autor: "carlos_letras", nota: 4, texto: "Comprei por um centavo para usar como peso de papel na minha mesa." },
           { autor: "maria_cultura", nota: 5, texto: "Adorei a aula de vocabulário embutida na descrição." },
@@ -452,21 +470,21 @@
       {
         id: 11,
         nome: "Estojo do Ruan perdido",
-        descricaoDetalhada: "Estojo misterioso que pertenceu ao Ruan em algum lugar do multiverso acadêmico.",
+        descricaoDetalhada: "Estojo misterioso não existente nos arquivos globais",
         preco: 15.00,
         precoAntigo: 20.00,
         imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/estojo-simples-nylon-70-grande-preto-tratorad-reflex-pct-c-04-614f5841-ifi3jhji9s",
         avisoInexistente: true,
         avaliacoes: [
-          { autor: "ruan_perdido", nota: 1, texto: "Caramba, achei o estojo que sumiu no fundo da minha gaveta há três anos!" },
+          { autor: "pres3", nota: 1, texto: "Aliás, qual a intenção disso?" },
           { autor: "aluno_confuso", nota: 1, texto: "Tentei comprar mas o produto evaporou antes de fechar o pedido." },
           { autor: "professor_turma", nota: 2, texto: "Esse modelo de estojo tem pernas e foge sozinho da carteira." },
-          { autor: "marina_perdida", nota: 1, texto: "Lenda urbana viva: todo mundo conhece o Ruan, mas ninguém acha o estojo dele." },
-          { autor: "carlos_escola", nota: 1, texto: "Item fantasma catalogado com sucesso no sistema." },
+          { autor: "marina", nota: 1, texto: "Lenda urbana viva: todo mundo conhece o Ruan, mas ninguém acha o estojo dele." },
+          { autor: "carlosdobalacobaco", nota: 1, texto: "Item fantasma catalogado com sucesso no sistema." },
           { autor: "pedro_chibi", nota: 2, texto: "Revirei a sala inteira e nada de achar vestígios físicos." },
-          { autor: "lucas_mochila", nota: 1, texto: "Sumiu misteriosamente do carrinho assim que cliquei em comprar." },
-          { autor: "ana_estudante", nota: 1, texto: "Alguém avisa o Ruan que o estojo dele virou objeto de estudo sobrenatural." },
-          { autor: "julia_misterio", nota: 2, texto: "Misterioso e intangível, adorei a brincadeira do site." },
+          { autor: "lucas_toguro", nota: 1, texto: "Sumiu misteriosamente do carrinho assim que cliquei em comprar." },
+          { autor: "ana_vivamariana", nota: 1, texto: "Alguém avisa o Ruan que o estojo dele virou objeto de estudo sobrenatural." },
+          { autor: "julia_plays", nota: 2, texto: "Misterioso e intangível, adorei a brincadeira do site." },
           { autor: "fernando_bau", nota: 1, texto: "Perdido para sempre nas dimensões paralelas da escola." }
         ]
       },
@@ -479,190 +497,176 @@
         imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_wnxourwnxourwnxo",
         avaliacoes: [
           { autor: "aluno_esperto", nota: 5, texto: "A função invisível é perfeita para mexer no celular durante a aula de matemática sem o professor ver!" },
-          { autor: "professor_atento", nota: 1, texto: "Eu sei que vocês estão mexendo em algo invisível, não pensem que me enganam!" },
-          { autor: "carlos_geek", nota: 5, texto: "Câmera de 256k HD plus absurda, qualidade de outra galáxia." },
-          { autor: "mari_tech", nota: 4, texto: "Funciona perfeitamente, mas tomei susto quando gastei os 3 usos gratuitos." },
-          { autor: "joao_celular", nota: 5, texto: "O celular mais tecnológico e secreto do mercado estudantil." },
-          { autor: "pedro_invisivel", nota: 5, texto: "Ninguém acredita quando mostro as fotos tiradas em alta resolução." },
-          { autor: "bia_estudante", nota: 4, texto: "Preço alto, mas vale pela exclusividade da invisibilidade." },
-          { autor: "lucas_ultra", nota: 5, texto: "ダイヤモンド gold mega plus supremo!" },
-          { autor: "ana_furtiva", nota: 5, text: "Salvou minha vida nas aulas mais chatas do semestre." },
-          { autor: "roberto_vip", nota: 5, texto: "Status máximo garantido para quem usa." }
+          { autor: "professor_atento", nota: 1, texto: "Eu sei que vocês estão mexendo em algo invisível, não pensem que me enganam!" }
         ]
       },
       {
-        id: 15,
+        id: 13,
         nome: "Arma Pula-Aula",
         descricaoDetalhada: "Com essa arma você pode gerar um portal que pula exatamente 50 minutos no tempo, o tempo exato de uma aula.",
-        preco: 175.00,
+        preco: 180.00,
         precoAntigo: 200.00,
-        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/f_auto,q_auto/Gemini_Generated_Image_l5butxl5butxl5bu",
+        imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/v1789325899/Gemini_Generated_Image_l5butxl5butxl5bu.png",
         avaliacoes: [
-          { autor: "aluno_fugitivo", nota: 5, texto: "Disparei no chão da sala e pulei direto para o recreio. Perfeito!" },
-          { autor: "carlos_cronos", nota: 5, texto: "A melhor invenção para evitar aquela aula insuportável de sexta-feira." },
-          { autor: "mari_tempo", nota: 4, texto: "Funciona certinho, 50 minutos a menos de sofrimento." },
-          { autor: "joao_portal", nota: 5, texto: "O portal abre na hora e o tempo passa voando." },
-          { autor: "pedro_aula", nota: 5, texto: "Meus amigos acham que eu desapareço por magia." },
-          { autor: "bia_cronos", nota: 4, texto: "Ótimo custo-benefício pelo tempo economizado." },
-          { autor: "lucas_futuro", nota: 5, texto: "Salvador da pátria estudantil!" },
-          { autor: "ana_viajante", nota: 5, texto: "Simplesmente genial, recomendo demais." },
-          { autor: "roberto_tempo", nota: 4, texto: "Só cuidado para não errar a mira e pular a hora do almoço." },
-          { autor: "gabriel_aula", nota: 5, texto: "Nota máxima pela praticidade temporal." }
+          { autor: "augustotigilarolarolaru", nota: 4, texto: "As vezes não funciona bem, mas serve e é ótimo." }
+          ,{ autor: "gustavoimenso", nota: 3, texto: "Usei tanto que pifou, mas consegui ajeitar." }
+          ,{ autor: "Jalapeno", nota: 5, texto: "Útil e simples de usar haha!." }
+          ,{ autor: "ricardinho", nota: 5, texto: "É perfeito! Pena que não tenho mais idade para usar." }
+          ,{ autor: "geocomigo", nota: 5, texto: "Simplismente sinistro." }
+      
+          ,
         ]
       }
+      ,
+{
+  id: 14,
+  nome: "Arma Pula-Aula Alpha",
+  descricaoDetalhada: "Ao invés de pular 1 aula (50 mim) agora pula praticamente o turno escolar INTEIRO! (5 hrs).",
+  preco: 265.00,
+  precoAntigo: 300.00,
+  imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/v1789326455/Gemini_Generated_Image_p4zpktp4zpktp4zp.png",
+  avaliacoes: [
+    { autor: "naoeojoao", nota: 5, texto: "Veio bem embalado!" },
+    { autor: "fernandox", nota: 5, texto: "Valeu a pena, mas só acho meio perigoso, que pode rolar essas questões de espaço-tempo." },
+    { autor: "chumilichi_9", nota: 4, texto: "Preço salgado, mas funciona bem." },
+    { autor: "bruninhofc(time)", nota: 4, texto: "A ARMA SÓ FUNCIONA NA ESCOLA! Fui usar pra eu pular a hora em que eu ia toma vacina no posto, mas o portal caiu no chão que nem um líquido, passei vergonha!" },
+    { autor: "zen_alt", nota: 5, texto: "Chegou rápido aqui :-)." },
+  ]
+}
+,
+{
+  id: 15,
+  nome: "Banana coberta de chocolate branco e granulados coloridos",
+  descricaoDetalhada: "Qual o significado por trás disso? Eu acho tão simples que me soa como algo diferente ou estranho.",
+  preco: 4.50,
+  precoAntigo: null,
+  imagem: "https://res.cloudinary.com/dcajmmhm/image/upload/v1789325356/Gemini_Generated_Image_juq9ktjuq9ktjuq9.png",
+  avaliacoes: [
+    { autor: "Cliente", nota: 5, texto: "Bem doce, mas estranho?" },
+    { autor: "Felipe_Antônio", nota: 5, texto: "Cai muito bem num final de semana logo após comer um churrasco.....?." },
+    { autor: "Theodorocolecoes", nota: 3, texto: "Não entendi a descrição mas me faz parecer real." },
+    { autor: "543_532", nota: 4, texto: "Efeitos colaterais como o do palhaçito, não sou fã muito disso." },
+    { autor: "eojoao", nota: 5, texto: "Quando dei a primeira mordida começei a se mexer igual um louco do hospício, eu acho isso uma vibe legal" },
+    { autor: "vend_oane", nota: 1, texto: "Não gostei, tive que jogar fora." },
+    { autor: "EUsouOhomem", nota: 5, texto: "vvvvuoroanoaoenofonaon." },
+    { autor: "Autornio", nota: 5, texto: "O cara de cima deu a louca. Mas falando sério sobre o produto, é bom, mas simplismente é irreal!." },
+    { autor: "prazer_getulio", nota: 5, texto: "e  bom.   deu.  abensoe.   ." },
+    { autor: "bomdia", nota: 5, texto: "Comprei pro meu neto, quando ele comeu ele sai correndo de casa e só voltou de noite dizendo que só foi uma curta caminhada." },
+  ]
+}
     ];
 
     let carrinho = [];
-    let indiceBannerAtual = 0;
-    const totalBanners = 3;
-
-    function mudarBanner(direcao) {
-      indiceBannerAtual += direcao;
-      if (indiceBannerAtual < 0) indiceBannerAtual = totalBanners - 1;
-      if (indiceBannerAtual >= totalBanners) indiceBannerAtual = 0;
-      atualizarBanner();
-    }
-
-    function irParaBanner(indice) {
-      indiceBannerAtual = indice;
-      atualizarBanner();
-    }
-
-    function atualizarBanner() {
-      const track = document.getElementById('banner-track');
-      track.style.transform = `translateX(-${indiceBannerAtual * 100}%)`;
-      const dots = document.querySelectorAll('.dot');
-      dots.forEach((dot, index) => {
-        if (index === indiceBannerAtual) {
-          dot.classList.add('ativo');
-        } else {
-          dot.classList.remove('ativo');
-        }
-      });
-    }
-
-    function mostrarSecao(idSecao) {
-      const secoes = document.querySelectorAll('.secao');
-      secoes.forEach(s => s.classList.remove('ativa'));
-      document.getElementById(idSecao).classList.add('ativa');
-      window.scrollTo(0, 0);
-    }
+    let slideAtual = 0;
 
     function renderizarProdutos() {
       const grid = document.getElementById('grid-produtos');
       grid.innerHTML = '';
+      
+      listaProdutos.forEach(p => {
+        const mediaNotas = calcularMedia(p.avaliacoes);
+        const estrelas = '★'.repeat(Math.round(mediaNotas)) + '☆'.repeat(5 - Math.round(mediaNotas));
+        
+        let precoHTML = p.precoAntigo 
+          ? `<span class="preco-antigo">R$ ${p.precoAntigo.toFixed(2)}</span> <span class="preco">R$ ${p.preco.toFixed(2)}</span>`
+          : `<span class="preco-normal">R$ ${p.preco.toFixed(2)}</span>`;
 
-      listaProdutos.forEach(prod => {
-        let mediaEstrelas = 0;
-        if (prod.avaliacoes && prod.avaliacoes.length > 0) {
-          let soma = prod.avaliacoes.reduce((acc, curr) => acc + curr.nota, 0);
-          mediaEstrelas = (soma / prod.avaliacoes.length).toFixed(1);
-        }
-
-        let card = document.createElement('div');
-        card.className = 'card-produto';
-        card.innerHTML = `
-          <div>
-            <img src="${prod.imagem}" alt="${prod.nome}" onclick="abrirDetalhe(${prod.id})" style="cursor: pointer;">
-            <h3 onclick="abrirDetalhe(${prod.id})" style="cursor: pointer;">${prod.nome}</h3>
-            <div class="card-estrelas">⭐ ${mediaEstrelas} (${prod.avaliacoes ? prod.avaliacoes.length : 0})</div>
-            <div>
-              ${prod.precoAntigo ? `<span class="preco-antigo">R$ ${prod.precoAntigo.toFixed(2)}</span>` : ''}
-              <span class="${prod.precoAntigo ? 'preco' : 'preco-normal'}">R$ ${prod.preco.toFixed(2)}</span>
-            </div>
-          </div>
-          <div>
+        grid.innerHTML += `
+          <div class="card-produto" onclick="verDetalhes(${p.id})">
+            <img src="${p.imagem}" alt="${p.nome}">
+            <h3>${p.nome}</h3>
+            <div class="card-estrelas">${estrelas} (${p.avaliacoes.length})</div>
+            <div>${precoHTML}</div>
             <div class="quantidade-box" onclick="event.stopPropagation()">
               <label>Qtd:</label>
-              <input type="number" id="qtd-${prod.id}" value="1" min="1">
+              <input type="number" id="qtd-${p.id}" value="1" min="1" max="99">
             </div>
-            <button class="btn-acao" onclick="adicionarAoCarrinho(${prod.id})">Adicionar ao Carrinho</button>
+            <button class="btn-acao" onclick="event.stopPropagation(); adicionarAoCarrinhoComQtd(${p.id})">Adicionar ao Carrinho</button>
           </div>
         `;
-        grid.appendChild(card);
       });
     }
 
-    function abrirDetalhe(id) {
-      const prod = listaProdutos.find(p => p.id === id);
-      if (!prod) return;
+    function calcularMedia(avaliacoes) {
+      if(!avaliacoes || avaliacoes.length === 0) return 0;
+      const soma = avaliacoes.reduce((acc, a) => acc + a.nota, 0);
+      return soma / avaliacoes.length;
+    }
 
-      let somaNotas = 0;
-      let contagemNotas = [0, 0, 0, 0, 0, 0]; 
-      if (prod.avaliacoes && prod.avaliacoes.length > 0) {
-        prod.avaliacoes.forEach(a => {
-          somaNotas += a.nota;
-          if(a.nota >= 1 && a.nota <= 5) contagemNotas[a.nota]++;
-        });
-      }
-      let media = prod.avaliacoes.length > 0 ? (somaNotas / prod.avaliacoes.length).toFixed(1) : 0;
-      let totalAval = prod.avaliacoes.length;
+    function verDetalhes(id) {
+      const produto = listaProdutos.find(p => p.id === id);
+      if(!produto) return;
 
-      let htmlComentarios = '';
-      if (prod.avaliacoes && prod.avaliacoes.length > 0) {
-        prod.avaliacoes.forEach(a => {
-          let estrelasStr = '⭐'.repeat(a.nota);
-          htmlComentarios += `
-            <div class="comentario-card">
-              <div class="comentario-autor">
-                <span>@${a.autor}</span>
-                <span class="comentario-nota">${estrelasStr}</span>
-              </div>
-              <div class="comentario-texto">${a.texto}</div>
-            </div>
-          `;
-        });
-      } else {
-        htmlComentarios = '<p>Ainda não há avaliações para este produto.</p>';
-      }
+      const media = calcularMedia(produto.avaliacoes);
+      const estrelasMedia = '★'.repeat(Math.round(media)) + '☆'.repeat(5 - Math.round(media));
 
-      let barrasHtml = '';
-      for(let i = 5; i >= 1; i--) {
-        let porcentagem = totalAval > 0 ? (contagemNotas[i] / totalAval) * 100 : 0;
-        barrasHtml += `
+      let precoHTML = produto.precoAntigo 
+        ? `<span class="preco-antigo" style="font-size: 18px;">R$ ${produto.precoAntigo.toFixed(2)}</span> <span class="preco-grande">R$ ${produto.preco.toFixed(2)}</span>`
+        : `<span class="preco-grande-normal">R$ ${produto.preco.toFixed(2)}</span>`;
+
+      let contagemNotas = {1:0, 2:0, 3:0, 4:0, 5:0};
+      produto.avaliacoes.forEach(a => contagemNotas[a.nota]++);
+      
+      let barrasHTML = '';
+      for(let i=5; i>=1; i--) {
+        const pct = produto.avaliacoes.length ? (contagemNotas[i] / produto.avaliacoes.length) * 100 : 0;
+        barrasHTML += `
           <div class="linha-barra">
             <span>${i}★</span>
-            <div class="barra-fundo"><div class="barra-preenchida" style="width: ${porcentagem}%"></div></div>
+            <div class="barra-fundo"><div class="barra-preenchida" style="width: ${pct}%"></div></div>
             <span>${contagemNotas[i]}</span>
           </div>
         `;
       }
 
-      const containerDetalhe = document.getElementById('conteudo-detalhe');
-      containerDetalhe.innerHTML = `
+      let comentariosHTML = produto.avaliacoes.map(a => `
+        <div class="comentario-card">
+          <div class="comentario-autor">
+            <span>${a.autor}</span>
+            <span class="comentario-nota">${'★'.repeat(a.nota)}${'☆'.repeat(5-a.nota)}</span>
+          </div>
+          <div class="comentario-texto">${a.texto}</div>
+        </div>
+      `).join('');
+
+      let avisoInexistenteHTML = produto.avisoInexistente 
+        ? `<div style="color: #ef4444; font-weight: bold; margin-bottom: 10px;">⚠️ Atenção: Este produto não existe na vida real ou foi perdido no espaço-tempo.</div>` 
+        : '';
+
+      const detalheContainer = document.getElementById('conteudo-detalhe');
+      detalheContainer.innerHTML = `
         <div class="detalhe-produto-imagem">
-          <img src="${prod.imagem}" alt="${prod.nome}">
+          <img src="${produto.imagem}" alt="${produto.nome}">
         </div>
         <div class="detalhe-produto-info">
-          <h2>${prod.nome}</h2>
-          ${prod.precoAntigo ? `<span class="preco-antigo" style="font-size: 18px;">R$ ${prod.precoAntigo.toFixed(2)}</span>` : ''}
-          <div class="${prod.precoAntigo ? 'preco-grande' : 'preco-grande-normal'}">R$ ${prod.preco.toFixed(2)}</div>
-          <p class="descricao-longa">${prod.descricaoDetalhada}</p>
+          <h2>${produto.nome}</h2>
+          ${avisoInexistenteHTML}
+          <div>${precoHTML}</div>
+          <p class="descricao-longa">${produto.descricaoDetalhada}</p>
           
           <div class="quantidade-box" style="justify-content: flex-start; margin-bottom: 15px;">
-            <label>Quantidade:</label>
-            <input type="number" id="qtd-detalhe-${prod.id}" value="1" min="1">
+            <label style="font-size: 14px;">Quantidade:</label>
+            <input type="number" id="qtd-detalhe-${produto.id}" value="1" min="1" max="99" style="width: 60px; padding: 5px;">
           </div>
           
-          <button class="btn-acao" onclick="adicionarAoCarrinhoDetalhe(${prod.id})" style="max-width: 250px;">Adicionar ao Carrinho</button>
+          <button class="btn-acao" style="max-width: 250px;" onclick="adicionarAoCarrinhoDetalhe(${produto.id})">Adicionar ao Carrinho</button>
+        </div>
 
-          <div class="secao-avaliacoes">
-            <h3>Avaliações dos Clientes</h3>
-            
-            <div class="painel-resumo-avaliacoes">
-              <div class="bloco-media-grande">
-                <div class="numero-media-gigante">${media}</div>
-                <div class="estrelas-gigantes">⭐</div>
-                <div class="total-avaliacoes-texto">Com base em ${totalAval} avaliações</div>
-              </div>
-              <div class="barras-distribuicao">
-                ${barrasHtml}
-              </div>
+        <div class="secao-avaliacoes">
+          <h3>Avaliações dos Clientes</h3>
+          <div class="painel-resumo-avaliacoes">
+            <div class="bloco-media-grande">
+              <div class="numero-media-gigante">${media.toFixed(1)}</div>
+              <div class="estrelas-gigantes">${estrelasMedia}</div>
+              <div class="total-avaliacoes-texto">${produto.avaliacoes.length} avaliações</div>
             </div>
+            <div class="barras-distribuicao">
+              ${barrasHTML}
+            </div>
+          </div>
 
-            <div class="lista-comentarios">
-              ${htmlComentarios}
-            </div>
+          <div class="lista-comentarios">
+            ${comentariosHTML}
           </div>
         </div>
       `;
@@ -670,94 +674,94 @@
       mostrarSecao('detalhe-produto');
     }
 
-    function adicionarAoCarrinho(id) {
+    function adicionarAoCarrinhoComQtd(id) {
       const qtdInput = document.getElementById(`qtd-${id}`);
-      const quantidade = parseInt(qtdInput.value) || 1;
-      adicionarLogicaCarrinho(id, quantidade);
+      const qtd = parseInt(qtdInput ? qtdInput.value : 1) || 1;
+      adicionar(id, qtd);
     }
 
     function adicionarAoCarrinhoDetalhe(id) {
       const qtdInput = document.getElementById(`qtd-detalhe-${id}`);
-      const quantidade = parseInt(qtdInput.value) || 1;
-      adicionarLogicaCarrinho(id, quantidade);
+      const qtd = parseInt(qtdInput ? qtdInput.value : 1) || 1;
+      adicionar(id, qtd);
     }
 
-    function adicionarLogicaCarrinho(id, quantidade) {
-      const prod = listaProdutos.find(p => p.id === id);
-      if (!prod) return;
+    function adicionar(id, qtd) {
+      const produto = listaProdutos.find(p => p.id === id);
+      const itemExistente = carrinho.find(i => i.id === id);
 
-      const itemExistente = carrinho.find(item => item.id === id);
       if (itemExistente) {
-        itemExistente.quantidade += quantidade;
+        itemExistente.quantidade += qtd;
       } else {
-        carrinho.push({
-          id: prod.id,
-          nome: prod.nome,
-          preco: prod.preco,
-          quantidade: quantidade
-        });
+        carrinho.push({ ...produto, quantidade: qtd });
       }
 
-      atualizarCarrinhoUI();
-      alert(`${quantidade}x "${prod.nome}" adicionado(s) ao carrinho!`);
+      atualizarCarrinho();
+      alert(`Adicionado ${qtd}x "${produto.nome}" ao carrinho!`);
     }
 
-    function atualizarCarrinhoUI() {
+    function atualizarCarrinho() {
       const contador = document.getElementById('contador-carrinho');
-      const listaCarrinho = document.getElementById('lista-carrinho');
-      const valorTotal = document.getElementById('valor-total');
-      const btnIrPagamento = document.getElementById('btn-ir-pagamento');
+      const lista = document.getElementById('lista-carrinho');
+      const totalEl = document.getElementById('valor-total');
+      const btnPagamento = document.getElementById('btn-ir-pagamento');
 
-      let totalItens = 0;
-      let precoTotal = 0;
+      const totalItens = carrinho.reduce((sum, item) => sum + item.quantidade, 0);
+      contador.innerText = totalItens;
 
       if (carrinho.length === 0) {
-        listaCarrinho.innerHTML = '<p>Seu carrinho está vazio.</p>';
-        btnIrPagamento.style.display = 'none';
-      } else {
-        let html = '';
-        carrinho.forEach(item => {
-          totalItens += item.quantidade;
-          let subtotal = item.preco * item.quantidade;
-          precoTotal += subtotal;
-
-          html += `
-            <div class="item-carrinho">
-              <div>
-                <strong>${item.nome}</strong><br>
-                <small>Qtd: ${item.quantidade} x R$ ${item.preco.toFixed(2)}</small>
-              </div>
-              <div>
-                <span>R$ ${subtotal.toFixed(2)}</span>
-                <button class="btn-secundario" onclick="removerItem(${item.id})" style="margin-left: 10px; padding: 2px 6px;">Remover</button>
-              </div>
-            </div>
-          `;
-        });
-        listaCarrinho.innerHTML = html;
-        btnIrPagamento.style.display = 'block';
+        lista.innerHTML = '<p>Seu carrinho está vazio.</p>';
+        totalEl.innerText = '0.00';
+        btnPagamento.style.display = 'none';
+        return;
       }
 
-      contador.innerText = totalItens;
-      valorTotal.innerText = precoTotal.toFixed(2);
+      btnPagamento.style.display = 'block';
+      lista.innerHTML = '';
+      let valorTotal = 0;
+
+      carrinho.forEach((item, index) => {
+        const subtotal = item.preco * item.quantidade;
+        valorTotal += subtotal;
+
+        lista.innerHTML += `
+          <div class="item-carrinho">
+            <div>
+              <strong>${item.nome}</strong><br>
+              <small>Qtd: ${item.quantidade} x R$ ${item.preco.toFixed(2)}</small>
+            </div>
+            <div>
+              <span style="margin-right: 15px; font-weight: bold;">R$ ${subtotal.toFixed(2)}</span>
+              <button class="btn-secundario" onclick="removerDoCarrinho(${index})">Remover</button>
+            </div>
+          </div>
+        `;
+      });
+
+      totalEl.innerText = valorTotal.toFixed(2);
     }
 
-    function removerItem(id) {
-      carrinho = carrinho.filter(item => item.id !== id);
-      atualizarCarrinhoUI();
+    function removerDoCarrinho(index) {
+      carrinho.splice(index, 1);
+      atualizarCarrinho();
     }
 
-    function realizarPagamento(event) {
-      event.preventDefault();
-      const numPedidoAleatorio = Math.floor(100000 + Math.random() * 900000);
-      const formaPgto = document.getElementById('forma-pagamento').value;
+    function mostrarSecao(secaoId) {
+      document.querySelectorAll('.secao').forEach(s => s.classList.remove('ativa'));
+      document.getElementById(secaoId).classList.add('ativa');
+      window.scrollTo(0, 0);
+    }
 
-      document.getElementById('numero-pedido').innerText = numPedidoAleatorio;
-      document.getElementById('pagamento-escolhido').innerText = formaPgto;
+    function realizarPagamento(e) {
+      e.preventDefault();
+      const forma = document.getElementById('forma-pagamento').value;
+      const numPedido = Math.floor(100000 + Math.random() * 900000);
+
+      document.getElementById('numero-pedido').innerText = numPedido;
+      document.getElementById('pagamento-escolhido').innerText = forma;
 
       carrinho = [];
-      atualizarCarrinhoUI();
-
+      atualizarCarrinho();
       mostrarSecao('status');
     }
 
@@ -765,9 +769,35 @@
       mostrarSecao('produtos');
     }
 
-    window.onload = function() {
-      renderizarProdutos();
+    /* LÓGICA DO BANNER */
+    function atualizarBanner() {
+      const track = document.getElementById('banner-track');
+      const dots = document.querySelectorAll('.dot');
+      if (track) {
+        track.style.transform = `translateX(-${slideAtual * 100}%)`;
+        dots.forEach((dot, idx) => {
+          dot.classList.toggle('ativo', idx === slideAtual);
+        });
+      }
     }
+
+    function mudarBanner(direcao) {
+      const totalSlides = 2;
+      slideAtual = (slideAtual + direcao + totalSlides) % totalSlides;
+      atualizarBanner();
+    }
+
+    function irParaBanner(index) {
+      slideAtual = index;
+      atualizarBanner();
+    }
+
+    setInterval(() => {
+      mudarBanner(1);
+    }, 5000);
+
+    renderizarProdutos();
   </script>
+
 </body>
 </html>
